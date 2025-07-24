@@ -1,8 +1,10 @@
 import React from "react";
 import { useWedding } from "@/hooks/useWedding";
-import EditableText from "@/components/EditableText";
+import EditableText from "@/components/Editable/EditableText.tsx";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Clock, Calendar } from "lucide-react";
+import HeroDecoration from "@/components/decorations/HeroDecoration.tsx";
+import LampDecoration from "@/components/decorations/LampDecoration.tsx";
 
 const WeddingDetailsSection = () => {
   const { weddingData, updateWeddingData } = useWedding();
@@ -35,7 +37,9 @@ const WeddingDetailsSection = () => {
   };
 
   return (
-    <section id="details" className="py-20 bg-card">
+    <section id="details" className="relative py-20 bg-card">
+      <HeroDecoration />
+      <LampDecoration />
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">

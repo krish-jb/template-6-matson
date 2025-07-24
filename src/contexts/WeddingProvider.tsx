@@ -3,82 +3,82 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { flushSync } from "react-dom";
 import { supabase } from "@/integrations/supabase/client";
-import type { Json } from "@/integrations/supabase/client";
-import type { User, WeddingData, WeddingWishType } from "@/types/wedding";
+import type { Json } from "@/integrations/supabase/custom-types";
+import type { User, WeddingData, WeddingWish } from "@/types/wedding";
 import uploadImage from "@/utils/UploadImage";
 import { WeddingContext } from "./WeddingContext";
 
 const defaultWeddingData: WeddingData = {
     couple: {
-        groomName: "Vineeth",
-        brideName: "Parvathy",
+        groomName: "Alec Richelieu",
+        brideName: "Zola Bekker",
         weddingQuote:
-            "Two souls, one path, endless love blessed by divine grace.",
+            "Together We Journey – Two souls, one path, endless love.",
         image: "/couple/white.png",
     },
     story: {
-        title: "Our Beautiful Journey",
+        title: "The A to Z's of Alec & Zola",
         content:
-            "From the first moment we met, we knew our hearts were destined to be united. Through laughter, dreams, and countless shared moments, our love has blossomed into something truly beautiful. Today, we celebrate not just our union, but the beginning of our forever.",
+            "We met on a beautiful autumn day in the local coffee shop. What started as a chance encounter over spilled coffee became the beginning of our forever love story. After three wonderful years together, Alec proposed during a romantic sunset at our favorite beach, and Zola said yes with tears of joy.",
         image: "/couple/white.png",
     },
     weddingDetails: {
         event1: {
-            title: "Wedding Ceremony",
-            date: "Sunday, May 18th 2025",
-            time: "11:55 AM to 12:25 PM",
-            venue: "Nedumudy Kottaram",
-            address: "Sree Baghavathi Temple, Nedumudy",
+            title: "Ceremony",
+            date: "June 10, 2030",
+            time: "5:00 PM",
+            venue: "Spring Events Patio",
+            address: "123 Spring Events Street, City, State 12345",
             addressMapLink: "https://maps.app.goo.gl/JDeNeY5MxbVFCeXK6",
         },
         event2: {
             title: "Reception",
-            date: "Monday, May 19th 2025",
-            time: "Between 3 PM - 10 PM",
-            venue: "Groom's Residence",
-            address: "Kailasam, Parakode P.O, Adoor",
+            date: "June 10, 2030",
+            time: "7:30 PM",
+            venue: "Spring Events Ballroom",
+            address: "123 Spring Events Street, City, State 12345",
             addressMapLink: "https://maps.app.goo.gl/JDeNeY5MxbVFCeXK6",
         },
         toKnow1: {
-            title: "Getting There",
+            title: "Dress Code",
             description:
-                "The venue is easily accessible by car or public transport. Parking facilities are available at both locations. Traditional dress is appreciated.",
+                "Semi-formal attire requested. Ladies: cocktail dresses or elegant separates. Gentlemen: suit and tie or dress shirt with slacks.",
         },
         toKnow2: {
-            title: "What to Wear",
+            title: "Gift Registry",
             description:
-                "Traditional Indian attire is preferred. Ladies: Sarees or elegant suits. Gentlemen: Dhoti-kurta, suit, or traditional wear.",
+                "Your presence is our present! If you wish to give a gift, we have a registry at Target and Amazon.",
         },
         toKnow3: {
-            title: "Blessings & Gifts",
+            title: "Song Requests",
             description:
-                "Your presence is the greatest gift. If you wish to bless us, we would appreciate your love and good wishes for our new journey together.",
+                "Help us create the perfect playlist! Send us your song requests and we'll make sure to play your favorites.",
         },
     },
     schedule: [
         {
             id: "1",
-            time: "11:00 AM",
+            time: "4:30 PM",
             event: "Guest Arrival",
-            description: "Welcome and traditional refreshments",
+            description: "Welcome drinks and mingling",
         },
         {
             id: "2",
-            time: "11:55 AM",
-            event: "Wedding Ceremony",
-            description: "Sacred wedding rituals begin",
+            time: "5:00 PM",
+            event: "Ceremony",
+            description: "Wedding ceremony begins",
         },
         {
             id: "3",
-            time: "12:25 PM",
-            event: "Ceremony Completion",
-            description: "Blessings and felicitations",
+            time: "6:00 PM",
+            event: "Cocktail Hour",
+            description: "Photos and cocktails",
         },
         {
             id: "4",
-            time: "1:00 PM",
-            event: "Traditional Feast",
-            description: "Wedding lunch and celebrations",
+            time: "7:30 PM",
+            event: "Reception",
+            description: "Dinner and dancing",
         },
     ],
     gallery: [
@@ -86,56 +86,53 @@ const defaultWeddingData: WeddingData = {
             id: "0",
             url: "/couple/white.png",
             caption: null,
+            name: null,
         },
         {
             id: "1",
             url: "/couple/white.png",
             caption: null,
+            name: null,
         },
         {
             id: "2",
             url: "/couple/white.png",
             caption: null,
+            name: null,
         },
     ],
     moreInfo: {
         title: "Additional Information",
         content:
-            "We are blessed to have you in our lives and would love to celebrate this special moment with you. For any dietary restrictions or special arrangements, please reach out to us. Children are welcome at the ceremony.",
+            "For dietary restrictions, please contact us at least one week before the wedding. We will have vegetarian and gluten-free options available. Children are welcome at both the ceremony and reception.",
     },
     contact: {
-        phone: "+91 9946981614, 8086501980",
-        email: "wedding@vineeth_parvathy.com",
-        address: "Kailasam, Parakode P.O, Adoor, Mob: 9946981614, 8086501980",
+        phone: "+1 (555) 123-4567",
+        email: "wedding@aleczola.com",
+        address: "123 Main Street, City, State 12345",
         addressMapLink: "https://maps.app.goo.gl/JDeNeY5MxbVFCeXK6",
     },
     jeweller: {
         title: "Our Wedding Jeweller",
         description:
             "Discover exquisite wedding rings and jewellery collections from our trusted partner.",
-        shopName: "Edimannickal Gold and Diamonds",
-        website:
-            "https://www.instagram.com/edimannickalgoldanddiamonds?igsh=czd3ZzV3bjNvMQ==",
+        shopName: "Diamond Dreams Jewellers",
+        website: "https://www.diamonddreamsjewellers.com",
     },
 };
 
 export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
-    children,
-}) => {
+                                                                             children,
+                                                                         }) => {
     const [weddingData, setWeddingData] =
         useState<WeddingData>(defaultWeddingData);
-    const [weddingWishes, setWeddingWishes] = useState<Array<WeddingWishType>>(
-        [],
-    );
+    const [weddingWishes, setWeddingWishes] = useState<Array<WeddingWish>>([]);
     const [user, setUser] = useState<User | null>(null);
     const [session, setSession] = useState<Session | null>(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [globalIsLoading, setGlobalIsLoading] = useState(true);
-
-    const WEBSITE_KEY = 'vineeth_parvathy_wedding';
+    const [globalIsLoading, setGloabalIsLoading] = useState(true);
 
     useEffect(() => {
-        // Set up auth state listener
         const loadWeddingData = async (id: string) => {
             try {
                 const { data: weddingData, error: weddingError } =
@@ -154,20 +151,23 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
 
                 if (weddingError) {
                     console.error("Error loading wedding data:", weddingError);
-                } else if (weddingData?.data) {
-                    setWeddingData(weddingData.data as unknown as WeddingData);
+                    return;
                 }
 
                 if (wishError) {
                     console.error("Error loading wish data: ", wishError);
-                } else if (wishData) {
-                    setWeddingWishes(wishData);
                 }
 
-                setGlobalIsLoading(false);
+                if (weddingData?.data) {
+                    setWeddingData(weddingData.data as unknown as WeddingData);
+                    setGloabalIsLoading(false);
+                }
+
+                if (wishData) {
+                    setWeddingWishes(wishData);
+                }
             } catch (error) {
                 console.error("Error loading wedding data:", error);
-                setGlobalIsLoading(false);
             }
         };
 
@@ -175,7 +175,8 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
             data: { subscription },
         } = supabase.auth.onAuthStateChange((_, session) => {
             flushSync(() => setSession(session));
-            
+            loadWeddingData(import.meta.env.VITE_WEBSITE_KEY || "default");
+
             if (session?.user) {
                 const mappedUser: User = {
                     id: session.user.id,
@@ -184,15 +185,12 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
                 };
                 setUser(mappedUser);
                 setIsLoggedIn(true);
-                loadWeddingData(session.user.id);
             } else {
                 setUser(null);
                 setIsLoggedIn(false);
-                loadWeddingData(WEBSITE_KEY);
             }
         });
 
-        // Check for existing session
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
             if (session?.user) {
@@ -203,10 +201,11 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
                 };
                 setUser(mappedUser);
                 setIsLoggedIn(true);
-                loadWeddingData(session.user.id);
-            } else {
-                loadWeddingData(WEBSITE_KEY);
+                loadWeddingData(import.meta.env.VITE_WEBSITE_KEY || "default");
             }
+            // else {
+            //     setGloabalIsLoading(false);
+            // }
         });
 
         return () => subscription.unsubscribe();
@@ -217,7 +216,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
             const { data: wishData, error: wishError } = await supabase
                 .from("guest_wishes")
                 .select("id, name, message")
-                .eq("variant", WEBSITE_KEY)
+                .eq("variant", import.meta.env.VITE_WEBSITE_KEY || "default")
                 .order("created_at", { ascending: false });
 
             if (wishError) {
@@ -272,6 +271,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
 
         if (file) {
             const imageUrl = await uploadImage(file, user, imageName);
+            if (!imageUrl) return;
             updatedGallery[index].url = imageUrl;
         }
 
@@ -306,12 +306,12 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
         return true;
     };
 
-    const addWish = async (wish: WeddingWishType) => {
+    const addWish = async (wish: WeddingWish) => {
         try {
             const { error } = await supabase.from("guest_wishes").insert({
                 name: wish.name,
                 message: wish.message,
-                variant: WEBSITE_KEY,
+                variant: import.meta.env.VITE_WEBSITE_KEY,
             });
 
             if (error) {

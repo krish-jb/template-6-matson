@@ -1,176 +1,238 @@
-import React, { useState } from "react";
-import { useWedding } from "@/hooks/useWedding";
-import EditableText from "@/components/EditableText";
-import { Card, CardContent } from "@/components/ui/card";
+import { Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
+import HeroDecoration from "@/components/decorations/HeroDecoration.tsx";
+import EditableText from "@/components/Editable/EditableText.tsx";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Plus, Trash2 } from "lucide-react";
+import { useWedding } from "@/hooks/useWedding";
 import type { ScheduleItem } from "@/types/wedding";
+import RingDecoration from "../decorations/RingDecoration";
 
 const ScheduleSection = () => {
-  const { weddingData, updateWeddingData, isLoggedIn } = useWedding();
-  const [isAddingItem, setIsAddingItem] = useState(false);
-  const [newItem, setNewItem] = useState<Omit<ScheduleItem, 'id'>>({
-    time: '',
-    event: '',
-    description: '',
-  });
-
-  const handleScheduleItemUpdate = (id: string, field: keyof ScheduleItem, value: string) => {
-    const updatedSchedule = weddingData.schedule.map(item =>
-      item.id === id ? { ...item, [field]: value } : item
-    );
-    updateWeddingData({ schedule: updatedSchedule });
-  };
-
-  const handleAddItem = () => {
-    const newScheduleItem: ScheduleItem = {
-      ...newItem,
-      id: Date.now().toString(),
-    };
-    updateWeddingData({ 
-      schedule: [...weddingData.schedule, newScheduleItem] 
+    const { weddingData, updateWeddingData, isLoggedIn } = useWedding();
+    const [isAddingItem, setIsAddingItem] = useState(false);
+    const [newItem, setNewItem] = useState<Omit<ScheduleItem, "id">>({
+        time: "",
+        event: "",
+        description: "",
     });
-    setNewItem({ time: '', event: '', description: '' });
-    setIsAddingItem(false);
-  };
 
-  const handleRemoveItem = (id: string) => {
-    const updatedSchedule = weddingData.schedule.filter(item => item.id !== id);
-    updateWeddingData({ schedule: updatedSchedule });
-  };
+    const handleScheduleItemUpdate = (
+        id: string,
+        field: keyof ScheduleItem,
+        value: string,
+    ) => {
+        const updatedSchedule = weddingData.schedule.map((item) =>
+            item.id === id ? { ...item, [field]: value } : item,
+        );
+        updateWeddingData({ schedule: updatedSchedule });
+    };
 
-  return (
-    <section id="schedule" className="py-20 wedding-gradient">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="text-3xl ornament mb-8 text-primary">✤</div>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-primary mb-4">
-              Wedding Schedule
-            </h2>
-            <p className="text-lg text-muted-foreground font-serif">
-              Timeline of our special day
-            </p>
-          </div>
+    const handleAddItem = () => {
+        const newScheduleItem: ScheduleItem = {
+            ...newItem,
+            id: Date.now().toString(),
+        };
+        updateWeddingData({
+            schedule: [...weddingData.schedule, newScheduleItem],
+        });
+        setNewItem({ time: "", event: "", description: "" });
+        setIsAddingItem(false);
+    };
 
-          <div className="space-y-6">
-            {weddingData.schedule.map((item, index) => (
-              <Card key={item.id} className="border-2 border-primary/20 bg-background/80">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-6 flex-1">
-                      <div className="text-center min-w-[100px]">
-                        <EditableText
-                          value={item.time}
-                          onSave={(value) => handleScheduleItemUpdate(item.id, 'time', value)}
-                          as="div"
-                          className="text-2xl font-bold text-primary font-display"
-                        />
-                      </div>
-                      
-                      <div className="flex-1">
-                        <EditableText
-                          value={item.event}
-                          onSave={(value) => handleScheduleItemUpdate(item.id, 'event', value)}
-                          as="h3"
-                          className="text-xl font-semibold text-foreground mb-2 font-display"
-                        />
-                        <EditableText
-                          value={item.description}
-                          onSave={(value) => handleScheduleItemUpdate(item.id, 'description', value)}
-                          as="p"
-                          className="text-muted-foreground font-serif"
-                        />
-                      </div>
+    const handleRemoveItem = (id: string) => {
+        const updatedSchedule = weddingData.schedule.filter(
+            (item) => item.id !== id,
+        );
+        updateWeddingData({ schedule: updatedSchedule });
+    };
+
+    return (
+        <section id="schedule" className="relative py-20 wedding-gradient">
+            <HeroDecoration />
+            <RingDecoration />
+            <div className="container mx-auto px-4">
+                <div className="max-w-4xl mx-auto">
+                    <div className="text-center mb-16">
+                        <div className="text-3xl ornament mb-8 text-primary">
+                            ✤
+                        </div>
+                        <h2 className="text-3xl md:text-4xl font-display font-bold text-primary mb-4">
+                            Wedding Schedule
+                        </h2>
+                        <p className="text-lg text-muted-foreground font-serif">
+                            Timeline of our special day
+                        </p>
                     </div>
-                    
-                    {isLoggedIn && weddingData.schedule.length > 1 && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleRemoveItem(item.id)}
-                        className="ml-4 text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
 
-            {isLoggedIn && (
-              <div className="text-center">
-                <Button
-                  onClick={() => setIsAddingItem(true)}
-                  className="bg-primary hover:bg-primary/90"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Schedule Item
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+                    <div className="space-y-6">
+                        {weddingData.schedule.map((item, index) => (
+                            <Card
+                                key={item.id}
+                                className="border-2 border-primary/20 bg-background/80"
+                            >
+                                <CardContent className="p-6">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center space-x-6 flex-1">
+                                            <div className="text-center min-w-[100px]">
+                                                <EditableText
+                                                    value={item.time}
+                                                    onSave={(value) =>
+                                                        handleScheduleItemUpdate(
+                                                            item.id,
+                                                            "time",
+                                                            value,
+                                                        )
+                                                    }
+                                                    as="div"
+                                                    className="text-2xl font-bold text-primary font-display"
+                                                />
+                                            </div>
 
-      {/* Add Item Dialog */}
-      <Dialog open={isAddingItem} onOpenChange={setIsAddingItem}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Add Schedule Item</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium mb-2 block">Time</label>
-              <Input
-                value={newItem.time}
-                onChange={(e) => setNewItem({ ...newItem, time: e.target.value })}
-                placeholder="e.g., 4:00 PM"
-              />
+                                            <div className="flex-1">
+                                                <EditableText
+                                                    value={item.event}
+                                                    onSave={(value) =>
+                                                        handleScheduleItemUpdate(
+                                                            item.id,
+                                                            "event",
+                                                            value,
+                                                        )
+                                                    }
+                                                    as="h3"
+                                                    className="text-xl font-semibold text-foreground mb-2 font-display"
+                                                />
+                                                <EditableText
+                                                    value={item.description}
+                                                    onSave={(value) =>
+                                                        handleScheduleItemUpdate(
+                                                            item.id,
+                                                            "description",
+                                                            value,
+                                                        )
+                                                    }
+                                                    as="p"
+                                                    className="text-muted-foreground font-serif"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {isLoggedIn &&
+                                            weddingData.schedule.length > 1 && (
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() =>
+                                                        handleRemoveItem(
+                                                            item.id,
+                                                        )
+                                                    }
+                                                    className="ml-4 text-destructive hover:text-destructive"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            )}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+
+                        {isLoggedIn && (
+                            <div className="text-center">
+                                <Button
+                                    onClick={() => setIsAddingItem(true)}
+                                    className="bg-primary hover:bg-primary/90"
+                                >
+                                    <Plus className="w-4 h-4 mr-2" />
+                                    Add Schedule Item
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
-            <div>
-              <label className="text-sm font-medium mb-2 block">Event</label>
-              <Input
-                value={newItem.event}
-                onChange={(e) => setNewItem({ ...newItem, event: e.target.value })}
-                placeholder="e.g., Ceremony"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium mb-2 block">Description</label>
-              <Textarea
-                value={newItem.description}
-                onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
-                placeholder="Brief description..."
-                rows={3}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddingItem(false)}>
-              Cancel
-            </Button>
-            <Button 
-              onClick={handleAddItem}
-              disabled={!newItem.time || !newItem.event}
-            >
-              Add Item
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </section>
-  );
+
+            {/* Add Item Dialog */}
+            <Dialog open={isAddingItem} onOpenChange={setIsAddingItem}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Add Schedule Item</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <div>
+                            <label className="text-sm font-medium mb-2 block">
+                                Time
+                            </label>
+                            <Input
+                                value={newItem.time}
+                                onChange={(e) =>
+                                    setNewItem({
+                                        ...newItem,
+                                        time: e.target.value,
+                                    })
+                                }
+                                placeholder="e.g., 4:00 PM"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-sm font-medium mb-2 block">
+                                Event
+                            </label>
+                            <Input
+                                value={newItem.event}
+                                onChange={(e) =>
+                                    setNewItem({
+                                        ...newItem,
+                                        event: e.target.value,
+                                    })
+                                }
+                                placeholder="e.g., Ceremony"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-sm font-medium mb-2 block">
+                                Description
+                            </label>
+                            <Textarea
+                                value={newItem.description}
+                                onChange={(e) =>
+                                    setNewItem({
+                                        ...newItem,
+                                        description: e.target.value,
+                                    })
+                                }
+                                placeholder="Brief description..."
+                                rows={3}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setIsAddingItem(false)}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleAddItem}
+                            disabled={!newItem.time || !newItem.event}
+                        >
+                            Add Item
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </section>
+    );
 };
 
 export default ScheduleSection;

@@ -1,38 +1,32 @@
-import React from "react";
-import { WeddingProvider } from "@/contexts/WeddingProvider";
-import Navigation from "@/components/sections/Navigation";
+import ContactSection from "@/components/sections/ContactSection";
+import Footer from "@/components/sections/Footer.tsx";
+import GallerySection from "@/components/sections/GallerySection";
 import HeroSection from "@/components/sections/HeroSection";
+import Navigation from "@/components/sections/Navigation";
+import ScheduleSection from "@/components/sections/ScheduleSection";
 import StorySection from "@/components/sections/StorySection";
 import WeddingDetailsSection from "@/components/sections/WeddingDetailsSection";
-import ScheduleSection from "@/components/sections/ScheduleSection";
-import GallerySection from "@/components/sections/GallerySection";
 import WishesSection from "@/components/sections/WishesSection";
-import ContactSection from "@/components/sections/ContactSection";
+import "../styles/fonts.css";
+import JewellerySection from "@/components/sections/JewellerySection";
+import MoreInfo from "@/components/sections/MoreInfo";
 
 const Index = () => {
-  return (
-    <WeddingProvider>
-      <div className="min-h-screen bg-background">
-        <Navigation />
-        <div id="home">
-          <HeroSection />
+    return (
+        <div className="min-h-screen bg-background">
+            <Navigation />
+            <HeroSection />
+            <StorySection />
+            <WeddingDetailsSection />
+            <ScheduleSection />
+            <GallerySection />
+            <WishesSection />
+            <MoreInfo />
+            <ContactSection />
+            <JewellerySection />
+            <Footer />
         </div>
-        <StorySection />
-        <WeddingDetailsSection />
-        <ScheduleSection />
-        <GallerySection />
-        <WishesSection />
-        <ContactSection />
-        
-        <footer className="py-8 bg-primary text-primary-foreground text-center">
-          <div className="container mx-auto px-4">
-            <div className="text-2xl ornament mb-2">❋</div>
-            <p className="font-serif">Vineeth & Parvathy • May 2025</p>
-          </div>
-        </footer>
-      </div>
-    </WeddingProvider>
-  );
+    );
 };
 
 export default Index;

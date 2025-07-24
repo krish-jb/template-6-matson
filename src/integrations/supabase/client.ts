@@ -1,15 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-const SUPABASE_URL = 'https://your-project-url.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = 'your-anon-key';
+const SUPABASE_URL = import.meta.env.VITE_SUPERBASE_URL;
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPERBASE_PUBLIC_KEY;
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-// Simple types for our needs
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]

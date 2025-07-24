@@ -1,16 +1,23 @@
-import { Link } from "react-router-dom";
+import type React from "react";
+import BackButton from "@/components/custom/BackButton";
 import ImageCarousel from "@/components/custom/ImageCarousel.tsx";
 import FlowerDecoration from "@/components/decorations/FlowerDecoration.tsx";
-import { Button } from "@/components/ui/button";
+import { useWedding } from "@/hooks/useWedding";
 
-const GallerySection = () => {
-    const imageLimit = 3;
+const Gallery: React.FC = () => {
+    const { isLoggedIn, weddingData } = useWedding();
+    const imageLimit = isLoggedIn
+        ? import.meta.env.VITE_GALLERY_IMAGE_LIMIT
+        : weddingData.gallery.length;
 
     return (
         <section id="gallery" className="relative py-20 bg-card">
             <FlowerDecoration />
-            <div className="container mx-auto px-4 z-10">
-                <div className="max-w-6xl mx-auto">
+            <div className="container mx-auto px-4">
+                <div className="relative max-w-6xl mx-auto">
+                    <div className="absolute">
+                        <BackButton />
+                    </div>
                     <div className="text-center mb-16">
                         <div className="text-3xl ornament mb-8 text-primary">
                             ✤
@@ -22,19 +29,11 @@ const GallerySection = () => {
                             Capturing precious moments
                         </p>
                     </div>
-
                     <ImageCarousel limit={imageLimit} />
-                    <div className="text-center">
-                        <Link to="/gallery">
-                            <Button variant="outline" className="font-serif">
-                                View All Photos
-                            </Button>
-                        </Link>
-                    </div>
                 </div>
             </div>
         </section>
     );
 };
 
-export default GallerySection;
+export default Gallery;

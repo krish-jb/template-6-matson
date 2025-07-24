@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button.tsx";
+import { Input } from "@/components/ui/input.tsx";
+import { Textarea } from "@/components/ui/textarea.tsx";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { useWedding } from "@/hooks/useWedding";
-import { cn } from "@/lib/utils";
+} from "@/components/ui/dialog.tsx";
+import { useWedding } from "@/hooks/useWedding.tsx";
+import { cn } from "@/lib/utils.ts";
 
 interface EditableTextProps {
   value: string;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useMemo} from "react";
 import { Button } from "@/components/ui/button";
 import { useWedding } from "@/hooks/useWedding";
 import { Menu, X, LogOut } from "lucide-react";
@@ -7,8 +7,9 @@ const Navigation = () => {
   const { isLoggedIn, logout } = useWedding();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { weddingData } =  useWedding();
 
-  const navItems = [
+  const navItems = useMemo(() => [
     { name: "Home", href: "#home" },
     { name: "Our Story", href: "#story" },
     { name: "Wedding Details", href: "#details" },
@@ -16,7 +17,7 @@ const Navigation = () => {
     { name: "Gallery", href: "#gallery" },
     { name: "Wishes", href: "#wishes" },
     { name: "Contact", href: "#contact" },
-  ];
+  ], []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,7 +49,7 @@ const Navigation = () => {
           <div className="flex items-center space-x-2">
             <div className="text-2xl ornament text-primary">❋</div>
             <span className="text-xl font-display font-semibold text-primary">
-              V & P
+              {weddingData.couple.groomName[0]} & {weddingData.couple.brideName[0]}
             </span>
           </div>
 
@@ -58,7 +59,7 @@ const Navigation = () => {
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className="text-sm font-medium text-foreground hover:text-primary transition-colors duration-200"
+                className="text-sm font-medium text-foreground hover:text-primary transition-colors duration-200 font-ibarra"
               >
                 {item.name}
               </button>
