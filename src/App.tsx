@@ -5,27 +5,31 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import {WeddingProvider} from "@/contexts/WeddingProvider.tsx";
+import { WeddingProvider } from "@/contexts/WeddingProvider.tsx";
 import Gallery from "./pages/Gallery";
+import Login from "./pages/Login";
+import Wishes from "./pages/Wishes";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <WeddingProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-      </WeddingProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+            <WeddingProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                    <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/gallery" element={<Gallery />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/wishes" element={<Wishes />} />
+                        <Route path="*" element={<NotFound />} />
+                    </Routes>
+                </BrowserRouter>
+            </WeddingProvider>
+        </TooltipProvider>
+    </QueryClientProvider>
 );
 
 export default App;

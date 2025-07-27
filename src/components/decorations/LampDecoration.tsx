@@ -1,6 +1,6 @@
 const LampDecoration = () => {
     return (
-        <div className="inset-0 pointer-events-none opacity-15 bg-inherit">
+        <div className="inset-0 pointer-events-none opacity-15 bg-inherit select-none">
             <div className="absolute bottom-0 left-0">
                 <img src="/decorative/element_1.webp" alt="" />
             </div>

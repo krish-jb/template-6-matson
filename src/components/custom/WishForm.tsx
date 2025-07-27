@@ -1,13 +1,13 @@
 import { Heart } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useWedding } from "@/hooks/useWedding";
+import useWedding from "@/hooks/useWedding";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 
 const WishForm: React.FC = () => {
-    const { addWish, weddingWishes, setWeddingWishes } = useWedding();
+    const { addWish } = useWedding();
     const [name, setName] = useState("");
     const [message, setMessage] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,11 +26,6 @@ const WishForm: React.FC = () => {
             message: message.trim(),
         };
 
-        const originalWishes = structuredClone(weddingWishes);
-        const tempWeddingWishes = structuredClone(weddingWishes);
-        tempWeddingWishes.splice(0, 0, newWish);
-
-        setWeddingWishes(tempWeddingWishes);
         setIsSubmitting(true);
         try {
             await addWish(newWish);
@@ -38,11 +33,8 @@ const WishForm: React.FC = () => {
             setName("");
             setMessage("");
         } catch (error) {
-            setWeddingWishes(originalWishes);
             toast.error("Failed to submit wish. Please try again.");
             console.log("Error sending wish: ", error.message);
-        } finally {
-            setIsSubmitting(false);
         }
     };
 

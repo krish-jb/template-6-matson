@@ -1,8 +1,9 @@
 import type React from "react";
-import {useId, useState} from "react";
+import { useId, useState } from "react";
+import useWedding from "@/hooks/useWedding";
 import HoverUploadIcon from "../custom/HoverUploadIcon";
 import ImageDropArea from "../custom/ImageDropArea";
-import {Button} from "../ui/button";
+import { Button } from "../ui/button";
 import {
     Dialog,
     DialogContent,
@@ -10,9 +11,8 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "../ui/dialog";
-import {Input} from "../ui/input";
-import {Label} from "../ui/label";
-import {useWedding} from "@/hooks/useWedding";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 type EditableImageProps = {
     onUpdate: (
@@ -26,21 +26,19 @@ type EditableImageProps = {
     ImageCaptionAvailable?: boolean;
     imageCaption?: string;
     index?: number;
-    iconClassName?: string;
 };
 
 const EditableImage: React.FC<EditableImageProps> = ({
-                                                         onUpdate,
-                                                         index,
-                                                         className,
-                                                         ImageCaptionAvailable: isImageCaptionAvailable = false,
-                                                         imageCaption = null,
-                                                         label = "Edit Image",
-                                                         children,
-                                                         iconClassName,
-                                                     }) => {
+    onUpdate,
+    index,
+    className,
+    ImageCaptionAvailable: isImageCaptionAvailable = false,
+    imageCaption = null,
+    label = "Edit Image",
+    children,
+}) => {
     const [isOpen, setIsOpen] = useState(false);
-    const {isLoggedIn} = useWedding();
+    const { isLoggedIn } = useWedding();
     const [editedImageCaption, setEditedImageCaption] = useState<string>(
         imageCaption || "",
     );
@@ -62,10 +60,6 @@ const EditableImage: React.FC<EditableImageProps> = ({
         setIsOpen(false);
     };
 
-    if (!isLoggedIn) {
-        return <div className={`${className}`}>{children}</div>;
-    }
-
     const isUpdateDisabled = (
         isLoading: boolean,
         image: File,
@@ -80,27 +74,23 @@ const EditableImage: React.FC<EditableImageProps> = ({
         );
     };
 
+    if (!isLoggedIn) {
+        return <span className={`${className}`}>{children}</span>;
+    }
+
     return (
         <div className={`relative group ${className}`}>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogTrigger asChild>{children}</DialogTrigger>
+                <DialogTrigger asChild>
+                    <span>{children}</span>
+                </DialogTrigger>
                 <DialogTrigger asChild>
                     <button
                         className="p-0 m-0 block max-w-fit max-h-fit"
                         type="button"
                     >
-                        <HoverUploadIcon/>
+                        <HoverUploadIcon />
                     </button>
-                </DialogTrigger>
-                <DialogTrigger asChild>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className={`absolute bg-white hover:bg-gray-300 rounded-sm bottom-2 right-2 z-50 opacity-100 transition-opacity p-1 h-6 w-6 ${iconClassName}`}
-                        aria-label="Edit Image"
-                    >
-                        ✏️
-                    </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -126,7 +116,7 @@ const EditableImage: React.FC<EditableImageProps> = ({
                             )}
                         </div>
                     </div>
-                    <ImageDropArea setImage={setImage}/>
+                    <ImageDropArea setImage={setImage} />
                     <div className="flex justify-end gap-2">
                         <Button
                             variant="outline"

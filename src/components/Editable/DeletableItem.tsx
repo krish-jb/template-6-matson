@@ -8,7 +8,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { useWedding } from "@/hooks/useWedding";
+import useWedding from "@/hooks/useWedding";
 
 interface DeleteableItemProps {
     value?: string;
@@ -22,15 +22,15 @@ interface DeleteableItemProps {
 }
 
 const DeletableItem: React.FC<DeleteableItemProps> = ({
-                                                          value,
-                                                          onDelete,
-                                                          label = "You sure?",
-                                                          className = "",
-                                                          iconClassName = "",
-                                                          children,
-                                                          isLoading,
-                                                          disabled,
-                                                      }) => {
+    value,
+    onDelete,
+    label = "You sure?",
+    className = "",
+    iconClassName = "",
+    children,
+    isLoading,
+    disabled,
+}) => {
     const [isOpen, setIsOpen] = useState(false);
     const { isLoggedIn } = useWedding();
 

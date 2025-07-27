@@ -1,5 +1,5 @@
 import { ExternalLink } from "lucide-react";
-import { useWedding } from "@/hooks/useWedding";
+import useWedding from "@/hooks/useWedding";
 import BangleDecoration from "../decorations/BangleDecoration";
 import FlowerDecoration from "../decorations/FlowerDecoration";
 
@@ -28,7 +28,7 @@ const JewellerySection = () => {
                             target="_blank"
                         >
                             {/* Image/Ad Banner Slot */}
-                            <div className="group border-2 border-primary/20 bg-background/80 group-hover:bg-secondary/80 duration-200 rounded-lg h-full p-2 md:p-6 flex flex-col">
+                            <div className="group border-2 border-primary/20 bg-background/80 group-hover:bg-secondary/10 duration-200 rounded-lg h-full p-2 md:p-6 flex flex-col">
                                 <div className="w-full bg-primary rounded-lg flex items-center justify-center border-2 border-primary overflow-hidden">
                                     <img
                                         src="/jewellery/ad-1.jpg"
@@ -44,7 +44,7 @@ const JewellerySection = () => {
                             target="_blank"
                         >
                             <div>
-                                <div className="group border-2 border-primary/20 bg-background/80 group-hover:bg-secondary/80 duration-200 rounded-lg h-full p-6 flex flex-col">
+                                <div className="group border-2 border-primary/20 bg-background/80 group-hover:bg-secondary/10 duration-200 rounded-lg h-full p-6 flex flex-col">
                                     <p className="text-lg text-gray-700 mb-6">
                                         {weddingData.jeweller.description}
                                     </p>

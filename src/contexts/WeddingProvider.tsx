@@ -1,6 +1,6 @@
 import type { Session } from "@supabase/supabase-js";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { flushSync } from "react-dom";
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/custom-types";
@@ -122,8 +122,8 @@ const defaultWeddingData: WeddingData = {
 };
 
 export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
-                                                                             children,
-                                                                         }) => {
+    children,
+}) => {
     const [weddingData, setWeddingData] =
         useState<WeddingData>(defaultWeddingData);
     const [weddingWishes, setWeddingWishes] = useState<Array<WeddingWish>>([]);
@@ -142,6 +142,20 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
                         .eq("user_id", id)
                         .maybeSingle();
 
+                if (weddingError) {
+                    console.error("Error loading wedding data:", weddingError);
+                    return;
+                }
+
+                if (weddingData?.data) {
+                    setWeddingData(weddingData.data as unknown as WeddingData);
+                }
+
+                if (location.pathname === "/wishes") {
+                    setGloabalIsLoading(false);
+                    return;
+                }
+
                 const { data: wishData, error: wishError } = await supabase
                     .from("guest_wishes")
                     .select("id, name, message")
@@ -149,18 +163,8 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
                     .order("created_at", { ascending: false })
                     .limit(3);
 
-                if (weddingError) {
-                    console.error("Error loading wedding data:", weddingError);
-                    return;
-                }
-
                 if (wishError) {
                     console.error("Error loading wish data: ", wishError);
-                }
-
-                if (weddingData?.data) {
-                    setWeddingData(weddingData.data as unknown as WeddingData);
-                    setGloabalIsLoading(false);
                 }
 
                 if (wishData) {
@@ -168,6 +172,8 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
                 }
             } catch (error) {
                 console.error("Error loading wedding data:", error);
+            } finally {
+                setGloabalIsLoading(false);
             }
         };
 
@@ -203,15 +209,13 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
                 setIsLoggedIn(true);
                 loadWeddingData(import.meta.env.VITE_WEBSITE_KEY || "default");
             }
-            // else {
-            //     setGloabalIsLoading(false);
-            // }
         });
 
         return () => subscription.unsubscribe();
     }, []);
 
-    const loadAllWeddingWishes = async () => {
+    const loadAllWeddingWishes = useCallback(async () => {
+        setGloabalIsLoading(true);
         try {
             const { data: wishData, error: wishError } = await supabase
                 .from("guest_wishes")
@@ -232,8 +236,27 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
             }
         } catch (error) {
             console.log("Error loading all wishes: ", error);
+        } finally {
+            setGloabalIsLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        const channel = supabase.channel("wishes-channel");
+        channel
+            .on(
+                "postgres_changes",
+                { event: "INSERT", schema: "public", table: "guest_wishes" },
+                (payload) => {
+                    const newWish: WeddingWish = payload.new as WeddingWish;
+                    setWeddingWishes((prev) => [newWish, ...prev]);
+                },
+            )
+            .subscribe();
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, []);
 
     const updateWeddingData = async (
         data: Partial<WeddingData>,

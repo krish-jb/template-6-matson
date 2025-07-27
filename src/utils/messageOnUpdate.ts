@@ -1,3 +1,4 @@
+import { toast as sToast } from "sonner";
 import { toast } from "@/hooks/use-toast";
 
 export enum useCase {
@@ -25,17 +26,21 @@ const messageOnUpdate = (
 
     if (isUpdated) {
         toast({
-            title: `Successfully ${actionMessage} ${sectionName}!`,
-            description: descriptionOnSuccess
-                ? `${descriptionOnSuccess}.`
-                : null,
+            title: `Failed to update ${sectionName}!`,
+            description:
+                "Please make sure you have a stable internet connection.",
+            variant: "destructive",
         });
         return;
     }
+
+    if (descriptionOnSuccess === undefined) {
+        sToast.success(`Successfully ${actionMessage} ${sectionName}!`);
+        return;
+    }
     toast({
-        title: `Failed to update ${sectionName}!`,
-        description: "Please make sure you have a stable internet connection.",
-        variant: "destructive",
+        title: `Successfully ${actionMessage} ${sectionName}!`,
+        description: descriptionOnSuccess,
     });
 };
 

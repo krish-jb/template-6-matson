@@ -1,22 +1,14 @@
-import React from "react";
-import { useWedding } from "@/hooks/useWedding";
-import EditableText from "@/components/Editable/EditableText.tsx";
 import SectionDecoration from "@/components/decorations/SectionDecoration.tsx";
+import EditableText from "@/components/Editable/EditableText.tsx";
+import useUpdateStory from "@/hooks/useUpdateStory";
+import useWedding from "@/hooks/useWedding";
+import EditableImage from "../Editable/EditableImage";
 
 const StorySection = () => {
-    const { weddingData, updateWeddingData } = useWedding();
+    const { weddingData } = useWedding();
 
-    const handleTitleUpdate = (newTitle: string) => {
-        updateWeddingData({
-            story: { ...weddingData.story, title: newTitle },
-        });
-    };
-
-    const handleContentUpdate = (newContent: string) => {
-        updateWeddingData({
-            story: { ...weddingData.story, content: newContent },
-        });
-    };
+    const { updateStoryContent, updateStoryImage, updateStoryTitle } =
+        useUpdateStory();
 
     return (
         <section
@@ -31,9 +23,10 @@ const StorySection = () => {
                         <h2 className="text-3xl md:text-4xl font-display font-bold text-primary mb-4">
                             <EditableText
                                 value={weddingData.story.title}
-                                onSave={handleTitleUpdate}
+                                onSave={updateStoryTitle}
                                 placeholder="Story title..."
                                 as="h2"
+                                label="Edit story title"
                                 className="text-3xl md:text-4xl font-display font-bold text-primary"
                             />
                         </h2>
@@ -46,21 +39,28 @@ const StorySection = () => {
                         <div className="space-y-6">
                             <EditableText
                                 value={weddingData.story.content}
-                                onSave={handleContentUpdate}
+                                onSave={updateStoryContent}
                                 multiline
                                 placeholder="Your love story..."
                                 as="p"
+                                label="Edit story content"
                                 className="text-lg leading-relaxed text-foreground font-serif text-left"
                             />
                         </div>
 
                         <div className="relative max-w-[430px]">
-                            <div className="aspect-square rounded-full overflow-hidden border-4 border-primary/20 shadow-lg">
-                                <img
-                                    src={weddingData.story.image}
-                                    alt="Couple"
-                                    className="w-full h-full object-cover sepia-overlay"
-                                />
+                            <div className="realtive aspect-square rounded-full overflow-hidden border-4 border-primary/20 shadow-lg">
+                                <EditableImage
+                                    label="Edit story image"
+                                    onUpdate={updateStoryImage}
+                                    className="h-full w-full"
+                                >
+                                    <img
+                                        src={weddingData.story.image}
+                                        alt="Couple"
+                                        className="w-full h-full object-cover sepia-overlay"
+                                    />
+                                </EditableImage>
                             </div>
                             <div className="absolute -top-4 -left-4 text-4xl ornament text-primary opacity-60">
                                 ❋

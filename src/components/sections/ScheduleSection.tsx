@@ -1,5 +1,4 @@
 import { Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
 import HeroDecoration from "@/components/decorations/HeroDecoration.tsx";
 import EditableText from "@/components/Editable/EditableText.tsx";
 import { Button } from "@/components/ui/button";
@@ -13,48 +12,22 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useWedding } from "@/hooks/useWedding";
-import type { ScheduleItem } from "@/types/wedding";
+import useUpdateSchedule from "@/hooks/useUpdateSchedule";
+import useWedding from "@/hooks/useWedding";
 import RingDecoration from "../decorations/RingDecoration";
 
 const ScheduleSection = () => {
-    const { weddingData, updateWeddingData, isLoggedIn } = useWedding();
-    const [isAddingItem, setIsAddingItem] = useState(false);
-    const [newItem, setNewItem] = useState<Omit<ScheduleItem, "id">>({
-        time: "",
-        event: "",
-        description: "",
-    });
+    const { weddingData, isLoggedIn } = useWedding();
 
-    const handleScheduleItemUpdate = (
-        id: string,
-        field: keyof ScheduleItem,
-        value: string,
-    ) => {
-        const updatedSchedule = weddingData.schedule.map((item) =>
-            item.id === id ? { ...item, [field]: value } : item,
-        );
-        updateWeddingData({ schedule: updatedSchedule });
-    };
-
-    const handleAddItem = () => {
-        const newScheduleItem: ScheduleItem = {
-            ...newItem,
-            id: Date.now().toString(),
-        };
-        updateWeddingData({
-            schedule: [...weddingData.schedule, newScheduleItem],
-        });
-        setNewItem({ time: "", event: "", description: "" });
-        setIsAddingItem(false);
-    };
-
-    const handleRemoveItem = (id: string) => {
-        const updatedSchedule = weddingData.schedule.filter(
-            (item) => item.id !== id,
-        );
-        updateWeddingData({ schedule: updatedSchedule });
-    };
+    const {
+        updateScheduleItem,
+        addScheduleItem,
+        removeScheduleItem,
+        setIsAddingItem,
+        isAddingItem,
+        newItem,
+        setNewItem,
+    } = useUpdateSchedule();
 
     return (
         <section id="schedule" className="relative py-20 wedding-gradient">
@@ -75,7 +48,7 @@ const ScheduleSection = () => {
                     </div>
 
                     <div className="space-y-6">
-                        {weddingData.schedule.map((item, index) => (
+                        {weddingData.schedule.map((item) => (
                             <Card
                                 key={item.id}
                                 className="border-2 border-primary/20 bg-background/80"
@@ -87,13 +60,14 @@ const ScheduleSection = () => {
                                                 <EditableText
                                                     value={item.time}
                                                     onSave={(value) =>
-                                                        handleScheduleItemUpdate(
+                                                        updateScheduleItem(
                                                             item.id,
                                                             "time",
                                                             value,
                                                         )
                                                     }
                                                     as="div"
+                                                    label={`Edit ${item.event} time`}
                                                     className="text-2xl font-bold text-primary font-display"
                                                 />
                                             </div>
@@ -102,25 +76,27 @@ const ScheduleSection = () => {
                                                 <EditableText
                                                     value={item.event}
                                                     onSave={(value) =>
-                                                        handleScheduleItemUpdate(
+                                                        updateScheduleItem(
                                                             item.id,
                                                             "event",
                                                             value,
                                                         )
                                                     }
                                                     as="h3"
+                                                    label={`Edit ${item.event} title`}
                                                     className="text-xl font-semibold text-foreground mb-2 font-display"
                                                 />
                                                 <EditableText
                                                     value={item.description}
                                                     onSave={(value) =>
-                                                        handleScheduleItemUpdate(
+                                                        updateScheduleItem(
                                                             item.id,
                                                             "description",
                                                             value,
                                                         )
                                                     }
                                                     as="p"
+                                                    label={`Edit ${item.event} description`}
                                                     className="text-muted-foreground font-serif"
                                                 />
                                             </div>
@@ -132,7 +108,7 @@ const ScheduleSection = () => {
                                                     variant="outline"
                                                     size="sm"
                                                     onClick={() =>
-                                                        handleRemoveItem(
+                                                        removeScheduleItem(
                                                             item.id,
                                                         )
                                                     }
@@ -169,10 +145,14 @@ const ScheduleSection = () => {
                     </DialogHeader>
                     <div className="space-y-4">
                         <div>
-                            <label className="text-sm font-medium mb-2 block">
+                            <label
+                                htmlFor="time_input"
+                                className="text-sm font-medium mb-2 block"
+                            >
                                 Time
                             </label>
                             <Input
+                                id="time_input"
                                 value={newItem.time}
                                 onChange={(e) =>
                                     setNewItem({
@@ -184,10 +164,14 @@ const ScheduleSection = () => {
                             />
                         </div>
                         <div>
-                            <label className="text-sm font-medium mb-2 block">
+                            <label
+                                htmlFor="event_input"
+                                className="text-sm font-medium mb-2 block"
+                            >
                                 Event
                             </label>
                             <Input
+                                id="event_input"
                                 value={newItem.event}
                                 onChange={(e) =>
                                     setNewItem({
@@ -199,10 +183,14 @@ const ScheduleSection = () => {
                             />
                         </div>
                         <div>
-                            <label className="text-sm font-medium mb-2 block">
+                            <label
+                                htmlFor="description_textarea"
+                                className="text-sm font-medium mb-2 block"
+                            >
                                 Description
                             </label>
                             <Textarea
+                                id="description_textarea"
                                 value={newItem.description}
                                 onChange={(e) =>
                                     setNewItem({
@@ -223,7 +211,7 @@ const ScheduleSection = () => {
                             Cancel
                         </Button>
                         <Button
-                            onClick={handleAddItem}
+                            onClick={addScheduleItem}
                             disabled={!newItem.time || !newItem.event}
                         >
                             Add Item

@@ -1,4 +1,4 @@
-import { useWedding } from "@/hooks/useWedding";
+import useWedding from "@/hooks/useWedding";
 import deleteImage from "@/utils/deleteImage";
 import messageOnUpdate, { useCase } from "@/utils/messageOnUpdate";
 
