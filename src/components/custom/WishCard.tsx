@@ -15,7 +15,7 @@ const WishCard: React.FC<WishCardProps> = ({ key: id, name, message }) => {
                         <h4 className="font-semibold text-foreground font-display">
                             {name}
                         </h4>
-                        <p className="text-muted-foreground font-serif text-sm mt-1">
+                        <p className="text-muted-foreground font-serif text-sm mt-1 truncate">
                             {message}
                         </p>
                     </div>
