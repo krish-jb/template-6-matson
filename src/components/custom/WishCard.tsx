@@ -11,7 +11,7 @@ const WishCard: React.FC<WishCardProps> = ({ key: id, name, message }) => {
             <CardContent className="p-4">
                 <div className="flex items-start space-x-3">
                     <div className="text-primary">❋</div>
-                    <div className="flex-1">
+                    <div className="flex-1 truncate">
                         <h4 className="font-semibold text-foreground font-display">
                             {name}
                         </h4>
