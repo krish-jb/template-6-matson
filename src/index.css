@@ -11,7 +11,7 @@ All colors MUST be HSL to match the warm, sepia-toned aesthetic
 @layer base {
     :root {
         /* Warm sepia-toned wedding palette inspired by the invitation */
-        --background: 35 20% 92%; /* Warm cream background */
+        --background: 35 20% 92%; /* Warm cream background *`/
         --foreground: 25 30% 15%; /* Deep warm brown text */
 
         --card: 35 25% 90%; /* Slightly darker cream for cards */

@@ -35,6 +35,8 @@ const WishForm: React.FC = () => {
         } catch (error) {
             toast.error("Failed to submit wish. Please try again.");
             console.log("Error sending wish: ", error.message);
+        } finally {
+          setIsSubmitting(false);
         }
     };
 
