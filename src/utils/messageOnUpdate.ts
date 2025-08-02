@@ -24,7 +24,7 @@ const messageOnUpdate = (
             break;
     }
 
-    if (isUpdated) {
+    if (!isUpdated) {
         toast({
             title: `Failed to update ${sectionName}!`,
             description:
