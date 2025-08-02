@@ -35,7 +35,7 @@ const WishesSection = () => {
                             <h3 className="text-xl font-display font-semibold text-primary mb-6 text-center">
                                 Recent Wishes
                             </h3>
-                            <div className="space-y-4 mb-6">
+                            <div className="space-y-4 mb-6 max-h-96 overflow-scroll scrollbar-none">
                                 {weddingWishes.length > 0 ? (
                                     weddingWishes
                                         .slice(0, 3)

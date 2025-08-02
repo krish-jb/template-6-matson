@@ -216,3 +216,9 @@ All colors MUST be HSL to match the warm, sepia-toned aesthetic
         -webkit-user-select: none;
     }
 }
+
+@layer components {
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+}
