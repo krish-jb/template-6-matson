@@ -2,6 +2,7 @@ import { LogOut, Menu, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useWedding from "@/hooks/useWedding";
 import { cn } from "@/lib/utils";
+import onEnterKeyDown from "@/utils/onEnterKeyDown";
 
 type NavIds =
     | "home"
@@ -209,7 +210,9 @@ const Navigation = () => {
                         isMenuOpen ? "opacity-50" : "opacity-0",
                     )}
                     onClick={closeSidebar}
-                    role="presentation"
+                    onKeyDown={(e) => onEnterKeyDown(e, closeSidebar)}
+                    role="button"
+                    tabIndex={0}
                 />
 
                 {/* Sidebar */}
@@ -237,21 +240,23 @@ const Navigation = () => {
 
                     {/* Sidebar Content */}
                     <div className="flex flex-col p-4 space-y-4">
-                        {navItems.map(({ name, id }) => (
-                            <button
-                                key={id}
-                                onClick={() => scrollToSection(id)}
-                                type="button"
-                                className={cn(
-                                    "text-left py-3 px-4 rounded-lg text-base font-medium transition-all duration-200",
-                                    activeSection === id
-                                        ? "text-primary bg-primary/10 border-l-4 border-primary"
-                                        : "text-gray-600 hover:text-primary hover:bg-primary/10",
-                                )}
-                            >
-                                {name}
-                            </button>
-                        ))}
+                        {navItems
+                            .filter((item) => !item.disabled)
+                            .map(({ name, id }) => (
+                                <button
+                                    key={id}
+                                    onClick={() => scrollToSection(id)}
+                                    type="button"
+                                    className={cn(
+                                        "text-left py-3 px-4 rounded-lg text-base font-medium transition-all duration-200",
+                                        activeSection === id
+                                            ? "text-primary bg-primary/10 border-l-4 border-primary"
+                                            : "text-gray-600 hover:text-primary hover:bg-primary/10",
+                                    )}
+                                >
+                                    {name}
+                                </button>
+                            ))}
                         {isLoggedIn && (
                             <>
                                 <hr className="border-gray-200 my-2" />

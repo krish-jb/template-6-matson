@@ -29,6 +29,8 @@ const ScheduleSection = () => {
         setNewItem,
     } = useUpdateSchedule();
 
+    console.log(weddingData.schedule);
+
     return (
         <section id="schedule" className="relative py-20 wedding-gradient">
             <HeroDecoration />
