@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import useWedding from "@/hooks/useWedding";
-import { toast } from "sonner";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 import HeroDecoration from "@/components/decorations/HeroDecoration";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import useWedding from "@/hooks/useWedding";
 
 const Login: React.FC = () => {
     const { login, isLoggedIn } = useWedding();
 
-    const [email, setEmail] = useState<string>("user@gmail.com");
-    const [password, setPassword] = useState<string>("password");
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const navigate = useNavigate();
 

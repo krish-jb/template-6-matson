@@ -6,6 +6,10 @@ import FlowerDecoration from "../decorations/FlowerDecoration";
 const JewellerySection = () => {
     const { weddingData } = useWedding();
 
+    if (weddingData.jeweller.disabled) {
+        return;
+    }
+
     return (
         <section id="wishes" className="relative py-20 bg-card">
             <FlowerDecoration />

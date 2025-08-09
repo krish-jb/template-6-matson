@@ -7,7 +7,11 @@ import HeroDecoration from "../decorations/HeroDecoration";
 import LetterDecoration from "../decorations/LetterDecoration";
 
 const WishesSection = () => {
-    const { weddingWishes } = useWedding();
+    const { weddingWishes, weddingData } = useWedding();
+
+    if (weddingData.wishDisabled) {
+        return;
+    }
 
     return (
         <section id="wishes" className="relative py-20 wedding-gradient">

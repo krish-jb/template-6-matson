@@ -14,6 +14,10 @@ const ContactSection = () => {
     const { updateContact } = useUpdateContacts();
     const { updateContactAddress } = useUpdateWeddingDetails();
 
+    if (weddingData.contact.disabled) {
+        return;
+    }
+
     return (
         <section id="contact" className="relative py-20 wedding-gradient">
             <FlowerDecoration />

@@ -19,7 +19,7 @@ const useUpdateStory = () => {
     };
 
     const updateStoryImage = async (file: File) => {
-        const imageUrl = await uploadImage(file, user, "story_image");
+        const { url: imageUrl } = await uploadImage(file, user, "story_image");
         updateWeddingData({
             story: { ...weddingData.story, image: imageUrl },
         });

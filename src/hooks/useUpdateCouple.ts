@@ -36,7 +36,7 @@ const useUpdateCouple = () => {
     };
 
     const updateCoupleImage = async (file: File) => {
-        const imageUrl = await uploadImage(file, user, "hero_image");
+        const { url: imageUrl } = await uploadImage(file, user, "hero_image");
         updateWeddingData({
             couple: { ...weddingData.couple, image: imageUrl },
         });

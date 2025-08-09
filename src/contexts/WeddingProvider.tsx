@@ -5,10 +5,15 @@ import { flushSync } from "react-dom";
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/custom-types";
 import type { User, WeddingData, WeddingWish } from "@/types/wedding";
+import { capitalizeWords } from "@/utils/capitalize";
+import deleteImage from "@/utils/deleteImage";
 import uploadImage from "@/utils/UploadImage";
 import { WeddingContext } from "./WeddingContext";
 
 const defaultWeddingData: WeddingData = {
+    colorScheme: "",
+    fontFamily: "",
+    template: "",
     couple: {
         groomName: "Alec Richelieu",
         brideName: "Zola Bekker",
@@ -21,6 +26,7 @@ const defaultWeddingData: WeddingData = {
         content:
             "We met on a beautiful autumn day in the local coffee shop. What started as a chance encounter over spilled coffee became the beginning of our forever love story. After three wonderful years together, Alec proposed during a romantic sunset at our favorite beach, and Zola said yes with tears of joy.",
         image: "/couple/white.png",
+        disabled: false,
     },
     weddingDetails: {
         event1: {
@@ -54,6 +60,7 @@ const defaultWeddingData: WeddingData = {
             description:
                 "Help us create the perfect playlist! Send us your song requests and we'll make sure to play your favorites.",
         },
+        disabled: false,
     },
     schedule: [
         {
@@ -101,16 +108,19 @@ const defaultWeddingData: WeddingData = {
             name: null,
         },
     ],
+    wishDisabled: false,
     moreInfo: {
         title: "Additional Information",
         content:
             "For dietary restrictions, please contact us at least one week before the wedding. We will have vegetarian and gluten-free options available. Children are welcome at both the ceremony and reception.",
+        disabled: false,
     },
     contact: {
         phone: "+1 (555) 123-4567",
         email: "wedding@aleczola.com",
         address: "123 Main Street, City, State 12345",
         addressMapLink: "https://maps.app.goo.gl/JDeNeY5MxbVFCeXK6",
+        disabled: false,
     },
     jeweller: {
         title: "Our Wedding Jeweller",
@@ -118,6 +128,7 @@ const defaultWeddingData: WeddingData = {
             "Discover exquisite wedding rings and jewellery collections from our trusted partner.",
         shopName: "Diamond Dreams Jewellers",
         website: "https://www.diamonddreamsjewellers.com",
+        disabled: false,
     },
 };
 
@@ -130,15 +141,15 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
     const [user, setUser] = useState<User | null>(null);
     const [session, setSession] = useState<Session | null>(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [globalIsLoading, setGloabalIsLoading] = useState(true);
+    const [globalIsLoading, setGlobalIsLoading] = useState(true);
 
     useEffect(() => {
         const loadWeddingData = async (id: string) => {
             try {
                 const { data: weddingData, error: weddingError } =
                     await supabase
-                        .from("wedding_data")
-                        .select("data")
+                        .from("web_entries")
+                        .select("web_data")
                         .eq("user_id", id)
                         .maybeSingle();
 
@@ -147,12 +158,14 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
                     return;
                 }
 
-                if (weddingData?.data) {
-                    setWeddingData(weddingData.data as unknown as WeddingData);
+                if (weddingData?.web_data) {
+                    setWeddingData(
+                        weddingData.web_data as unknown as WeddingData,
+                    );
                 }
 
                 if (location.pathname === "/wishes") {
-                    setGloabalIsLoading(false);
+                    setGlobalIsLoading(false);
                     return;
                 }
 
@@ -173,7 +186,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
             } catch (error) {
                 console.error("Error loading wedding data:", error);
             } finally {
-                setGloabalIsLoading(false);
+                setGlobalIsLoading(false);
             }
         };
 
@@ -214,8 +227,16 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
         return () => subscription.unsubscribe();
     }, []);
 
+    useEffect(() => {
+        if (!globalIsLoading) {
+            const groom = capitalizeWords(weddingData.couple.groomName);
+            const bride = capitalizeWords(weddingData.couple.brideName);
+            document.title = `${bride} & ${groom}`;
+        }
+    }, [globalIsLoading, weddingData]);
+
     const loadAllWeddingWishes = useCallback(async () => {
-        setGloabalIsLoading(true);
+        setGlobalIsLoading(true);
         try {
             const { data: wishData, error: wishError } = await supabase
                 .from("guest_wishes")
@@ -237,13 +258,13 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
         } catch (error) {
             console.log("Error loading all wishes: ", error);
         } finally {
-            setGloabalIsLoading(false);
+            setGlobalIsLoading(false);
         }
     }, []);
 
     useEffect(() => {
-        const channel = supabase.channel("wishes-channel");
-        channel
+        const wishChannel = supabase.channel("wishes-channel");
+        wishChannel
             .on(
                 "postgres_changes",
                 { event: "INSERT", schema: "public", table: "guest_wishes" },
@@ -254,7 +275,28 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
             )
             .subscribe();
         return () => {
-            supabase.removeChannel(channel);
+            supabase.removeChannel(wishChannel);
+        };
+    }, []);
+
+    useEffect(() => {
+        const weddingDataChannel = supabase.channel("wedding-data-channel");
+        weddingDataChannel
+            .on(
+                "postgres_changes",
+                { event: "UPDATE", schema: "public", table: "web_entries" },
+                (payload) => {
+                    const newWeddingData = payload.new;
+                    if (newWeddingData?.web_data) {
+                        setWeddingData(
+                            newWeddingData.web_data as unknown as WeddingData,
+                        );
+                    }
+                },
+            )
+            .subscribe();
+        return () => {
+            supabase.removeChannel(weddingDataChannel);
         };
     }, []);
 
@@ -277,28 +319,42 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
         file: File | null,
         imageCaption: string | null,
         index: number,
+        oldImageName?: string,
     ) => {
         const imageId = `${Date.now()}-${crypto.randomUUID()}`;
         const imageName = `gallery_image_${imageId}`;
+        let newIndex = index;
 
         const updatedGallery = [...weddingData.gallery];
 
-        if (index >= updatedGallery.length) {
+        const galleryImageCount = updatedGallery.length;
+
+        if (index >= galleryImageCount) {
             updatedGallery.push({
                 id: imageId,
                 url: "",
                 caption: imageCaption,
                 name: imageName,
             });
+            newIndex = galleryImageCount;
         }
 
         if (file) {
-            const imageUrl = await uploadImage(file, user, imageName);
+            const { url: imageUrl, name: fileName } = await uploadImage(
+                file,
+                user,
+                imageName,
+            );
             if (!imageUrl) return;
-            updatedGallery[index].url = imageUrl;
+            updatedGallery[newIndex].url = imageUrl;
+            updatedGallery[newIndex].name = fileName;
         }
 
-        updatedGallery[index].caption = imageCaption;
+        if (oldImageName) {
+            deleteImage(user, oldImageName);
+        }
+
+        updatedGallery[newIndex].caption = imageCaption;
         updateWeddingData({ gallery: updatedGallery });
     };
 
@@ -309,10 +365,10 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
         }
 
         try {
-            const { error } = await supabase.from("wedding_data").upsert(
+            const { error } = await supabase.from("web_entries").upsert(
                 {
                     user_id: user.id,
-                    data: data as unknown as Json,
+                    web_data: data as unknown as Json,
                     updated_at: new Date().toISOString(),
                 },
                 { onConflict: "user_id" },
@@ -323,7 +379,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
                 return false;
             }
         } catch (error) {
-            console.error("Error saving wedding data:", error);
+            console.error("Error saving wedding data:", error.message);
             return false;
         }
         return true;
@@ -338,7 +394,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
             });
 
             if (error) {
-                console.log("Error adding new wish(Supabase error)", error);
+                console.log("Error adding new wish (Supabase error): ", error);
             }
         } catch (error) {
             console.log("Error adding new wish", error);
@@ -368,6 +424,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
                 session,
                 isLoggedIn,
                 globalIsLoading,
+                setGlobalIsLoading,
                 updateWeddingData,
                 updateGalleryImage,
                 saveData,

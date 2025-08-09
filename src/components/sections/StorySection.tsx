@@ -10,6 +10,10 @@ const StorySection = () => {
     const { updateStoryContent, updateStoryImage, updateStoryTitle } =
         useUpdateStory();
 
+    if (weddingData.story.disabled) {
+        return;
+    }
+
     return (
         <section
             id="story"
@@ -20,16 +24,14 @@ const StorySection = () => {
                 <div className="max-w-4xl mx-auto text-center">
                     <div className="text-3xl ornament mb-8 text-primary">✤</div>
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-display font-bold text-primary mb-4">
-                            <EditableText
-                                value={weddingData.story.title}
-                                onSave={updateStoryTitle}
-                                placeholder="Story title..."
-                                as="h2"
-                                label="Edit story title"
-                                className="text-3xl md:text-4xl font-display font-bold text-primary"
-                            />
-                        </h2>
+                        <EditableText
+                            value={weddingData.story.title}
+                            onSave={updateStoryTitle}
+                            placeholder="Story title..."
+                            as="h2"
+                            label="Edit story title"
+                            className="text-3xl md:text-4xl font-display font-bold text-primary mb-2"
+                        />
                         <p className="text-lg text-muted-foreground font-serif">
                             Our Story
                         </p>

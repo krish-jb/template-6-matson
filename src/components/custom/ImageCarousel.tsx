@@ -31,6 +31,7 @@ const ImageCarousel: React.FC<imageCarouselProps> = ({ limit }) => {
                                 label={`Edit galler image ${index + 1}`}
                                 ImageCaptionAvailable
                                 className="relative w-full h-full"
+                                imageName={image.name}
                             >
                                 {image.caption ? (
                                     <img

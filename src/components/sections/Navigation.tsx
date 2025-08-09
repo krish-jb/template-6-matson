@@ -16,6 +16,7 @@ type NavIds =
 type NavItems = {
     name: string;
     id: NavIds;
+    disabled: boolean;
 };
 
 const Navigation = () => {
@@ -29,15 +30,31 @@ const Navigation = () => {
 
     const navItems: NavItems[] = useMemo(
         () => [
-            { name: "Home", id: "home" },
-            { name: "Our Story", id: "story" },
-            { name: "Wedding Details", id: "details" },
-            { name: "Schedule", id: "schedule" },
-            { name: "Gallery", id: "gallery" },
-            { name: "Wishes", id: "wishes" },
-            { name: "Contact", id: "contact" },
+            { name: "Home", id: "home", disabled: false },
+            {
+                name: "Our Story",
+                id: "story",
+                disabled: weddingData.story.disabled,
+            },
+            {
+                name: "Wedding Details",
+                id: "details",
+                disabled: weddingData.weddingDetails.disabled,
+            },
+            { name: "Schedule", id: "schedule", disabled: false },
+            { name: "Gallery", id: "gallery", disabled: false },
+            {
+                name: "Wishes",
+                id: "wishes",
+                disabled: weddingData.wishDisabled,
+            },
+            {
+                name: "Contact",
+                id: "contact",
+                disabled: weddingData.contact.disabled,
+            },
         ],
-        [],
+        [weddingData],
     );
 
     const headerStyleObserver = useRef<IntersectionObserver | null>(null);
@@ -137,20 +154,22 @@ const Navigation = () => {
 
                         {/* Desktop Navigation */}
                         <div className="hidden md:flex items-center space-x-8">
-                            {navItems.map(({ name, id }) => (
-                                <button
-                                    key={id}
-                                    onClick={() => scrollToSection(id)}
-                                    className={cn(
-                                        "text-sm font-medium text-gray-600 hover:text-primary transition-colors duration-200 font-ibarra",
-                                        activeSection === id &&
-                                            `${activeSectionColor} border-b border-b-primary`,
-                                    )}
-                                    type="button"
-                                >
-                                    {name}
-                                </button>
-                            ))}
+                            {navItems
+                                .filter((item) => !item.disabled)
+                                .map(({ name, id }) => (
+                                    <button
+                                        key={id}
+                                        onClick={() => scrollToSection(id)}
+                                        className={cn(
+                                            "text-sm font-medium text-gray-600 hover:text-primary transition-colors duration-200 font-ibarra",
+                                            activeSection === id &&
+                                                `${activeSectionColor} border-b border-b-primary`,
+                                        )}
+                                        type="button"
+                                    >
+                                        {name}
+                                    </button>
+                                ))}
 
                             {isLoggedIn && (
                                 <button

@@ -8,6 +8,10 @@ import ToKnowCard from "../custom/ToKnowCard";
 const WeddingDetailsSection: React.FC = () => {
     const { weddingData } = useWedding();
 
+    if (weddingData.weddingDetails.disabled) {
+        return;
+    }
+
     return (
         <section id="details" className="relative py-20 bg-card">
             <HeroDecoration />

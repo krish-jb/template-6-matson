@@ -1,6 +1,7 @@
 import type React from "react";
 import { useId, useState } from "react";
 import useWedding from "@/hooks/useWedding";
+import { cn } from "@/lib/utils";
 import HoverUploadIcon from "../custom/HoverUploadIcon";
 import ImageDropArea from "../custom/ImageDropArea";
 import { Button } from "../ui/button";
@@ -19,28 +20,36 @@ type EditableImageProps = {
         newImage: File | null,
         imageCaption?: string,
         index?: number,
+        oldImageName?: string,
     ) => Promise<void>;
     children: React.ReactNode;
     className?: string;
+    iconClassName?: string;
+    enableIcon?: boolean;
     label?: string;
     ImageCaptionAvailable?: boolean;
     imageCaption?: string;
     index?: number;
+    imageName?: string;
+    isEmpty?: boolean;
 };
 
 const EditableImage: React.FC<EditableImageProps> = ({
     onUpdate,
     index,
     className,
+    iconClassName,
+    enableIcon: isIconEnabled,
     ImageCaptionAvailable: isImageCaptionAvailable = false,
-    imageCaption = null,
+    imageCaption = "",
     label = "Edit Image",
     children,
+    imageName,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const { isLoggedIn } = useWedding();
-    const [editedImageCaption, setEditedImageCaption] = useState<string>(
-        imageCaption || "",
+    const [editedImageCaption, setEditedImageCaption] = useState<string | null>(
+        imageCaption,
     );
     const [image, setImage] = useState<File | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -48,7 +57,7 @@ const EditableImage: React.FC<EditableImageProps> = ({
 
     const handleUpdate = async () => {
         setIsLoading(true);
-        await onUpdate(image, editedImageCaption, index);
+        await onUpdate(image, editedImageCaption, index, imageName);
         setImage(null);
         setIsOpen(false);
         setIsLoading(false);
@@ -60,17 +69,16 @@ const EditableImage: React.FC<EditableImageProps> = ({
         setIsOpen(false);
     };
 
-    const isUpdateDisabled = (
-        isLoading: boolean,
-        image: File,
-        imageCaption: string,
-        editedImageCaption: string,
-    ): boolean => {
+    const isUpdateDisabled = () => {
+        if (editedImageCaption === "") {
+            setEditedImageCaption(null);
+        }
+
+        if (isLoading) return true;
+        if (!image && !imageName) return true;
         return (
-            isLoading ||
-            (!image &&
-                (!isImageCaptionAvailable ||
-                    imageCaption === editedImageCaption))
+            !image &&
+            (!isImageCaptionAvailable || imageCaption === editedImageCaption)
         );
     };
 
@@ -79,18 +87,32 @@ const EditableImage: React.FC<EditableImageProps> = ({
     }
 
     return (
-        <div className={`relative group ${className}`}>
+        <div className={`relative group overflow-hidden ${className}`}>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
                     <span>{children}</span>
                 </DialogTrigger>
                 <DialogTrigger asChild>
-                    <button
-                        className="p-0 m-0 block max-w-fit max-h-fit"
-                        type="button"
-                    >
-                        <HoverUploadIcon />
-                    </button>
+                    {isIconEnabled ? (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className={cn(
+                                "absolute bg-white hover:bg-gray-300 rounded-sm bottom-2 right-2 z-50 opacity-100 transition-opacity p-1 h-6 w-6 cursor-pointer",
+                                iconClassName,
+                            )}
+                            aria-label="Edit Image"
+                        >
+                            ✏️
+                        </Button>
+                    ) : (
+                        <button
+                            className="p-0 m-0 block max-w-fit max-h-fit"
+                            type="button"
+                        >
+                            <HoverUploadIcon />
+                        </button>
+                    )}
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -128,13 +150,8 @@ const EditableImage: React.FC<EditableImageProps> = ({
                         <Button
                             onClick={handleUpdate}
                             variant="default"
-                            className="rounded-sm"
-                            disabled={isUpdateDisabled(
-                                isLoading,
-                                image,
-                                imageCaption,
-                                editedImageCaption,
-                            )}
+                            className="rounded-sm cursor-pointer"
+                            disabled={isUpdateDisabled()}
                         >
                             {isLoading ? "Uploading..." : "Update"}
                         </Button>

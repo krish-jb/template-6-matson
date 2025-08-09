@@ -7,6 +7,10 @@ const MoreInfo: React.FC = () => {
     const { weddingData } = useWedding();
     const { updateContent, updateTitle } = useUpdateMoreInfo();
 
+    if (weddingData.moreInfo.disabled) {
+        return;
+    }
+
     return (
         <section id="info" className="relative py-20 bg-card">
             <HeroDecoration />
