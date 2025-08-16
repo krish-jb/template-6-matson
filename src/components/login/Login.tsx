@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import useWedding from "@/hooks/useWedding";
 
 const Login: React.FC = () => {
-    const { login, isLoggedIn } = useWedding();
+    const { login, isLoggedIn, user } = useWedding();
 
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
@@ -17,10 +17,10 @@ const Login: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (isLoggedIn) {
-            navigate("/");
+        if (isLoggedIn && user?.username) {
+            navigate(`/${user?.username}`);
         }
-    }, [isLoggedIn, navigate]);
+    }, [isLoggedIn, user?.username, navigate]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -35,7 +35,6 @@ const Login: React.FC = () => {
                 toast.error(error.message);
             } else {
                 toast.success("Welcome back! You are now logged in!");
-                navigate("/");
             }
         } catch (error) {
             console.log(error);
@@ -64,7 +63,7 @@ const Login: React.FC = () => {
                                 Email
                             </Label>
                             <Input
-                                id="email"
+                                id={"email"}
                                 placeholder="Your email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -80,7 +79,7 @@ const Login: React.FC = () => {
                             </Label>
                             <Input
                                 placeholder="Your password"
-                                id="password"
+                                id={"password"}
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -96,7 +95,7 @@ const Login: React.FC = () => {
                         {isSubmitting ? "Loghing in.." : "Login"}
                     </Button>
                     <div className="mx-auto">
-                        <Link to="/">
+                        <Link to={`/${user?.username}`}>
                             <p className="border-b hover:border-foreground text-muted-foreground hover:text-foreground inline-flex items-center gap-2">
                                 <ArrowLeft className="w-4 h-4" />
                                 Go back home

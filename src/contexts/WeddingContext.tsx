@@ -7,6 +7,7 @@ export interface WeddingContextType {
     weddingWishes: Array<WeddingWish>;
     setWeddingWishes: Dispatch<SetStateAction<Array<WeddingWish>>>;
     user: User | null;
+    setUser: Dispatch<SetStateAction<User | null>>;
     session: Session | null;
     isLoggedIn: boolean;
     globalIsLoading: boolean;

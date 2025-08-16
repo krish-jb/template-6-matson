@@ -1,6 +1,7 @@
 export interface User {
     id: string;
     email: string;
+    username: string;
     isAuthenticated: boolean;
 }
 
@@ -90,6 +91,14 @@ export interface WeddingData {
     moreInfo: WeddingMoreInfo;
     contact: WeddingContact;
     jeweller: WeddingJeweller;
+}
+
+export interface WebEntry {
+    web_data: WeddingData;
+    user_profile: {
+        user_id: string;
+        username: string;
+    };
 }
 
 export interface WeddingWish {

@@ -33,13 +33,10 @@ const ImageCarousel: React.FC<imageCarouselProps> = ({ limit }) => {
                                 className="relative w-full h-full"
                                 imageName={image.name}
                             >
-                                {image.caption ? (
+                                {image.url ? (
                                     <img
                                         src={image.url}
-                                        alt={
-                                            image.caption ||
-                                            `Gallery image ${index + 1}`
-                                        }
+                                        alt=""
                                         className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300 sepia-overlay"
                                     />
                                 ) : (

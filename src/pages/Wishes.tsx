@@ -1,23 +1,25 @@
 import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 import BackButton from "@/components/custom/BackButton";
 import Loading from "@/components/custom/Loading";
 import WishCard from "@/components/custom/WishCard";
 import HeroDecoration from "@/components/decorations/HeroDecoration";
 import LetterDecoration from "@/components/decorations/LetterDecoration";
 import Footer from "@/components/sections/Footer";
+import useSyncUsername from "@/hooks/useSyncUsername";
 import useWedding from "@/hooks/useWedding";
 
 const Wishes: React.FC = () => {
+    const { username } = useParams();
     const { weddingWishes, loadAllWeddingWishes, globalIsLoading } =
         useWedding();
 
-    useEffect(() => {
-        loadAllWeddingWishes();
-    }, [loadAllWeddingWishes]);
+    useSyncUsername(username);
 
     useEffect(() => {
-        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    }, []);
+        loadAllWeddingWishes();
+        window.scrollTo(0, 0);
+    }, [loadAllWeddingWishes]);
 
     if (globalIsLoading) {
         return <Loading />;

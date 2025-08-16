@@ -7,14 +7,14 @@ import HeroDecoration from "../decorations/HeroDecoration";
 import LetterDecoration from "../decorations/LetterDecoration";
 
 const WishesSection = () => {
-    const { weddingWishes, weddingData } = useWedding();
+    const { weddingWishes, weddingData, user } = useWedding();
 
     if (weddingData.wishDisabled) {
         return;
     }
 
     return (
-        <section id="wishes" className="relative py-20 wedding-gradient">
+        <section id={"wishes"} className="relative py-20 wedding-gradient">
             <HeroDecoration />
             <LetterDecoration />
             <div className="container mx-auto px-4 z-10">
@@ -64,7 +64,7 @@ const WishesSection = () => {
 
                             {weddingWishes.length > 0 && (
                                 <div className="text-center">
-                                    <Link to="/wishes">
+                                    <Link to={`/wishes/${user?.username}`}>
                                         <Button
                                             variant="outline"
                                             className="font-serif"

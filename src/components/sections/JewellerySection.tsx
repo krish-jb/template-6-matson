@@ -11,7 +11,7 @@ const JewellerySection = () => {
     }
 
     return (
-        <section id="wishes" className="relative py-20 bg-card">
+        <section id={"jewellery"} className="relative py-20 bg-card">
             <FlowerDecoration />
             <BangleDecoration />
             <div className="container flex items-center mx-auto px-4 z-10">
@@ -55,15 +55,10 @@ const JewellerySection = () => {
                                     <h3 className="text-2xl font-serif text-amber-800 mb-4">
                                         {weddingData.jeweller.shopName}
                                     </h3>
-                                    <a
-                                        href={weddingData.jeweller.website}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center text-amber-700 hover:text-amber-800 font-medium"
-                                    >
+                                    <span className="inline-flex items-center text-amber-700 hover:text-amber-800 font-medium">
                                         Visit Our Store
                                         <ExternalLink className="w-4 h-4 ml-2" />
-                                    </a>
+                                    </span>
                                 </div>
                             </div>
                         </a>

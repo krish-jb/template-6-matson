@@ -12,7 +12,8 @@ type NavIds =
     | "gallery"
     | "wishes"
     | "contact"
-    | "info";
+    | "info"
+    | "jewellery";
 
 type NavItems = {
     name: string;
@@ -21,8 +22,7 @@ type NavItems = {
 };
 
 const Navigation = () => {
-    const { isLoggedIn, logout } = useWedding();
-    const { weddingData } = useWedding();
+    const { isLoggedIn, logout, weddingData } = useWedding();
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
@@ -53,6 +53,16 @@ const Navigation = () => {
                 name: "Contact",
                 id: "contact",
                 disabled: weddingData.contact.disabled,
+            },
+            {
+                name: "Info",
+                id: "info",
+                disabled: true,
+            },
+            {
+                name: "Jeweller",
+                id: "jewellery",
+                disabled: true,
             },
         ],
         [weddingData],
@@ -110,7 +120,6 @@ const Navigation = () => {
                 mainObserver.current?.observe(element);
             }
         });
-        mainObserver.current?.observe(document.getElementById("info"));
 
         return () => {
             if (mainObserver.current) mainObserver.current.disconnect();
@@ -128,12 +137,11 @@ const Navigation = () => {
     const toggleSidebar = useCallback(() => setIsMenuOpen((prev) => !prev), []);
 
     const closeSidebar = useCallback(() => setIsMenuOpen(false), []);
-
     return (
         <>
-            <div id="top-sentinel" className="h1"></div>
+            <div id={"top-sentinel"} className="h1"></div>
             <nav
-                id="header"
+                id={"header"}
                 className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
                     isScrolled
                         ? "bg-background/95 backdrop-blur-md shadow-lg"
