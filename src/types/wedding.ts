@@ -98,6 +98,7 @@ export interface WebEntry {
     user_profile: {
         user_id: string;
         username: string;
+        purchased_templates: string[];
     };
 }
 
