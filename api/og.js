@@ -1,8 +1,10 @@
 // api/og.ts
 import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
+import dotenv from "dotenv";
 
 export default async function handler(req, res) {
+    dotenv.config();
     const { username } = req.query;
 
     if (!username || typeof username !== "string") {
@@ -20,7 +22,9 @@ export default async function handler(req, res) {
         });
 
         const page = await browser.newPage();
-        await page.goto(`https://template-5.matson.app/${username}`, {
+        const template = process.env.TEMPLATE_NAME;
+
+        await page.goto(`https://${template}.matson.app/${username}`, {
             waitUntil: "networkidle0",
         });
 
