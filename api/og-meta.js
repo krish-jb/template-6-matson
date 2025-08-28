@@ -1,8 +1,10 @@
 // api/og-meta.js
 import fs from "fs";
 import path from "path";
+import dotenv from "dotenv";
 
 export default async function handler(req, res) {
+    dotenv.config();
     try {
         const username =
             typeof req.query?.username === "string"
@@ -21,7 +23,8 @@ export default async function handler(req, res) {
         // Make sure your index.html has a tag like:
         // <meta property="og:image" content="__OG_IMAGE__" />
         // or this regex will still replace any existing og:image meta.
-        const ogUrl = `https://template-5.matson.app/api/og?username=${encodeURIComponent(username)}`;
+        const template = process.env.TEMPLATE_NAME;
+        const ogUrl = `https://${template}.matson.app/api/og?username=${encodeURIComponent(username)}`;
 
         // If you used a placeholder __OG_IMAGE__, replace that:
         if (html.includes("__OG_IMAGE__")) {
