@@ -5,7 +5,7 @@ import { flushSync } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/custom-types";
-import type { User, WebEntry, WeddingData, WeddingWish } from "@/types/wedding";
+import type { User, WebEntry, WeddingAd, WeddingData, WeddingWish } from "@/types/wedding";
 import { capitalizeWords } from "@/utils/capitalize";
 import deleteImage from "@/utils/deleteImage";
 import uploadImage from "@/utils/UploadImage";
@@ -136,6 +136,7 @@ const defaultWeddingData: WeddingData = {
 export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
+    const [weddingAd, setWeddingAd] = useState<WeddingAd | null>(null);
     const [weddingData, setWeddingData] =
         useState<WeddingData>(defaultWeddingData);
     const [weddingWishes, setWeddingWishes] = useState<Array<WeddingWish>>([]);
@@ -155,7 +156,6 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
         weddingData.couple.groomName,
         weddingData.couple.brideName,
     ]);
-
     const fetchWeddingData = useCallback(
         async (
             filterField: "user_profile.username" | "user_profile.user_id",
@@ -170,14 +170,50 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
                             user_profile!inner(
                                 user_id,
                                 username,
+            partner_id,
                                 purchased_templates
                             )`,
                         )
                         .eq(filterField, value)
                         .maybeSingle<WebEntry>();
-                return { weddingData, weddingError };
+      if (weddingError) {
+        console.error("Wedding Data Error:", weddingError);
+        return { weddingData: null, weddingError, weddingAd: null, weddingAdError: null };
+      }
+      const partnerId = weddingData?.user_profile?.partner_id;
+      if (!partnerId) {
+        console.warn("No partner_id found for user:", value);
+        return { weddingData, weddingError: null, weddingAd: null, weddingAdError: null };
+      }
+      const { weddingAd, weddingAdError } = await loadWeddingAd(partnerId);
+
+      return { weddingData, weddingError: null, weddingAd, weddingAdError };
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return { weddingData: null, weddingError: error, weddingAd: null, weddingAdError: error };
+    }
+  },
+  [],
+);
+
+const loadWeddingAd = useCallback(
+  async (partnerId: string) => {
+    try {
+      const { data: weddingAd, error: weddingAdError } = await supabase
+        .from("partner_profile")
+        .select("Ad_section")
+        .eq("partner_id", partnerId)
+        .maybeSingle<WebEntry>();
+
+      if (weddingAdError) {
+        console.error("Wedding Ad Error:", weddingAdError);
+      }
+
+      console.log("Wedding Ad:", weddingAd);
+      return { weddingAd, weddingAdError };
             } catch (error) {
                 console.log("Error fetching data: ", error);
+            return { weddingAd: null, weddingAdError: error };
             }
         },
         [],
@@ -189,7 +225,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
             const templateName = import.meta.env.VITE_TEMPLATE_NAME;
             let weddingDataCopy: WebEntry | null = null;
             try {
-                const { weddingData, weddingError } = username
+                const { weddingData, weddingError, weddingAd } = username
                     ? await fetchWeddingData("user_profile.username", username)
                     : await fetchWeddingData("user_profile.user_id", userId);
 
@@ -204,6 +240,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
 
                 setWeddingData(weddingData.web_data);
                 weddingDataCopy = weddingData;
+                setWeddingAd(weddingAd);
 
                 const currentUserId = weddingData?.user_profile?.user_id;
                 const currentUsername = weddingData?.user_profile?.username;
@@ -506,6 +543,9 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
     const contextValue: WeddingContextType = useMemo(
         () => ({
             weddingData,
+            weddingAd,
+            setWeddingAd,
+            loadWeddingAd,
             weddingWishes,
             setWeddingWishes,
             loadAllWeddingWishes,
@@ -524,11 +564,13 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
         }),
         [
             weddingData,
+            weddingAd,
             weddingWishes,
             user,
             session,
             isLoggedIn,
             globalIsLoading,
+            loadWeddingAd,
             loadAllWeddingWishes,
             updateWeddingData,
             saveData,

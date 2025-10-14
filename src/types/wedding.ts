@@ -98,10 +98,21 @@ export interface WebEntry {
     user_profile: {
         user_id: string;
         username: string;
+        partner_id: string | null;
         purchased_templates: string[];
     };
 }
 
+export interface WeddingAd {
+    Ad_section:{
+    title: string;
+    description: string;
+    image: string;
+    shopName: string;
+    website: string;
+    disabled: boolean;
+    }
+}
 export interface WeddingWish {
     id: string;
     name: string;
