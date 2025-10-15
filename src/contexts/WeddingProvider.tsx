@@ -170,7 +170,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({
                             user_profile!inner(
                                 user_id,
                                 username,
-            partner_id,
+                                partner_id,
                                 purchased_templates
                             )`,
                         )
@@ -250,8 +250,9 @@ const loadWeddingAd = useCallback(
                 if (shouldUpdateUser || !username || !userId) {
                     setUser((prev) => ({
                         ...prev,
-                        id: prev.id || currentUserId,
-                        username: prev.username || currentUsername,
+                        id: currentUserId || prev?.id,
+                        username: currentUsername || prev?.username,
+                        isAuthenticated: true,
                     }));
                 }
 
@@ -276,9 +277,7 @@ const loadWeddingAd = useCallback(
                         weddingDataCopy?.user_profile?.purchased_templates?.includes(
                             templateName,
                         ) ?? false;
-                    if (isLoggedIn || isPurchased) {
-                        setGlobalIsLoading(false);
-                    }
+                    setGlobalIsLoading(false);
                 }
             }
         },

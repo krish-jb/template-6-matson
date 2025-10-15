@@ -5,22 +5,23 @@ import FlowerDecoration from "../decorations/FlowerDecoration";
 
 const JewellerySection = () => {
     const { weddingAd } = useWedding();
-    console.log("Wedding Ad:", weddingAd);
+    if (!weddingAd || !weddingAd.Ad_section) {
+        return null;
+    }
     // Provide default values if weddingAd is null/undefined
-    const safeWeddingAd = weddingAd || {
+    const safeWeddingAd = {
         Ad_section: {
-            title: 'Our Trusted Jeweler',
-            image: '/jeweller/ad-1.jpg',
-            description: 'Discover our exclusive collection of fine jewelry and wedding rings.',
-            shopName: 'Luxury Jewelers',
-            website: '#',
-            disabled: false
+            title: weddingAd.Ad_section.title || 'Our wedding cards',
+            image: weddingAd.Ad_section.image || '/jeweller/ad-1.jpg',
+            description: weddingAd.Ad_section.description || 'Discover our exclusive collection of fine wedding cards.',
+            shopName: weddingAd.Ad_section.shopName || 'Luxury Cards',
+            website: weddingAd.Ad_section.website || 'matson.app',
+            disabled: weddingAd.Ad_section.disabled || false
         }
     };
     if (safeWeddingAd.Ad_section.disabled) {
         return null;
     }
-
     return (
         <section id={"jewellery"} className="relative py-20 bg-card">
             <FlowerDecoration />
