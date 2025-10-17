@@ -4,12 +4,24 @@ import BangleDecoration from "../decorations/BangleDecoration";
 import FlowerDecoration from "../decorations/FlowerDecoration";
 
 const JewellerySection = () => {
-    const { weddingData } = useWedding();
-
-    if (weddingData.jeweller.disabled) {
-        return;
+    const { weddingAd } = useWedding();
+    if (!weddingAd || !weddingAd.Ad_section) {
+        return null;
     }
-
+    // Provide default values if weddingAd is null/undefined
+    const safeWeddingAd = {
+        Ad_section: {
+            title: weddingAd.Ad_section.title || 'Our wedding cards',
+            image: weddingAd.Ad_section.image || '/jeweller/ad-1.jpg',
+            description: weddingAd.Ad_section.description || 'Discover our exclusive collection of fine wedding cards.',
+            shopName: weddingAd.Ad_section.shopName || 'Luxury Cards',
+            website: weddingAd.Ad_section.website || 'matson.app',
+            disabled: weddingAd.Ad_section.disabled || false
+        }
+    };
+    if (safeWeddingAd.Ad_section.disabled) {
+        return null;
+    }
     return (
         <section id={"jewellery"} className="relative py-20 bg-card">
             <FlowerDecoration />
@@ -22,12 +34,12 @@ const JewellerySection = () => {
                             ✤
                         </div>
                         <h2 className="text-3xl md:text-4xl font-display font-bold text-primary mb-4">
-                            {weddingData.jeweller.title}
+                            {safeWeddingAd.Ad_section.title}
                         </h2>
                     </div>
                     <div className="group grid max-w-xl gap-2 place-items-center">
                         <a
-                            href={weddingData.jeweller.website}
+                            href={safeWeddingAd.Ad_section.website}
                             className="underno-underline"
                             target="_blank"
                         >
@@ -35,7 +47,7 @@ const JewellerySection = () => {
                             <div className="group border-2 border-primary/20 bg-background/80 group-hover:bg-secondary/10 duration-200 rounded-lg h-full p-2 md:p-6 flex flex-col">
                                 <div className="w-full bg-primary rounded-lg flex items-center justify-center border-2 border-primary overflow-hidden">
                                     <img
-                                        src="/jewellery/ad-1.jpg"
+                                         src={safeWeddingAd.Ad_section.image}
                                         alt="jewellery"
                                         className="w-full h-full object-cover"
                                     />
@@ -43,17 +55,17 @@ const JewellerySection = () => {
                             </div>
                         </a>
                         <a
-                            href={weddingData.jeweller.website}
-                            className="underno-underline"
+                            href={safeWeddingAd.Ad_section.website}
+                            className="underno-underline w-full"
                             target="_blank"
                         >
-                            <div>
-                                <div className="group border-2 border-primary/20 bg-background/80 group-hover:bg-secondary/10 duration-200 rounded-lg h-full p-6 flex flex-col">
+                            <div className="w-full">
+                                <div className="group border-2 border-primary/20 bg-background/80 group-hover:bg-secondary/10 duration-200 rounded-lg h-full p-2 md:p-6 flex flex-col w-full">
                                     <p className="text-lg text-gray-700 mb-6">
-                                        {weddingData.jeweller.description}
+                                        {safeWeddingAd.Ad_section.description}
                                     </p>
                                     <h3 className="text-2xl font-serif text-amber-800 mb-4">
-                                        {weddingData.jeweller.shopName}
+                                        {safeWeddingAd.Ad_section.shopName}
                                     </h3>
                                     <span className="inline-flex items-center text-amber-700 hover:text-amber-800 font-medium">
                                         Visit Our Store
